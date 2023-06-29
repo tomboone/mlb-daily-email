@@ -4,7 +4,7 @@ from models import User, Role, Config
 from forms import ConfigForm
 from database import db_session, init_db
 from flask_login import login_required
-from flask_security import Security, SQLAlchemySessionUserDatastore, hash_password, current_user
+from flask_security import Security, SQLAlchemySessionUserDatastore, hash_password
 from flask_security.decorators import roles_required
 from datetime import datetime, timedelta
 from flask_apscheduler import APScheduler
