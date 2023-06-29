@@ -22,6 +22,8 @@ docs/_build/
 log
 *.log
 *.sql
+*.sqlite
+*.sqlite3
 
 # Coverage reports
 htmlcov/
