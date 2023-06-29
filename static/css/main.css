@@ -1,0 +1,10 @@
+.boxscore,
+.probables table,
+.leaders table,
+.standings table {
+    font-size: 12px;
+}
+
+.boxscore_team {
+    flex: 1;
+}
