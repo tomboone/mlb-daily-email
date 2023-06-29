@@ -107,33 +107,5 @@ def report():
                            leaders=leaders, title='Today\'s Email | {}'.format(site_name))
 
 
-@app.route('/meta/<meta_type>')
-@login_required
-def meta(meta_type):
-    data = statsapi.meta(type=meta_type)
-    return data
-
-
-@app.route('/standings')
-@login_required
-def stats():
-    data = statsapi.standings_data()
-    return data
-
-
-@app.route('/<game_id>')
-# @login_required
-def game(game_id):
-    bbgame = statsapi.get('game', {'gamePk': game_id})
-    return bbgame
-
-
-@app.route('/<game_id>/box')
-# @login_required
-def box(game_id):
-    box_data = statsapi.boxscore_data(game_id)
-    return box_data
-
-
 if __name__ == '__main__':
     app.run()
