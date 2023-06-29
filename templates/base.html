@@ -24,12 +24,21 @@
                         {% if current_user.is_authenticated %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('report') }}">Today's Email</a>
+                            </li>
+                            {% if current_user.has_role('admin') %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('config') }}">Site Config</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/change">Change Password</a>
+                                </li>
+                            {% endif %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                                <a class="nav-link" href="/logout">Logout</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                                <a class="nav-link" href="/login">Login</a>
                             </li>
                         {% endif %}
                     </ul>
@@ -37,8 +46,16 @@
             </div>
         </nav>
     </header>
-
     <div class="container-fluid">
+        <div class="messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         {% block content %}
         {% endblock %}
     </div>

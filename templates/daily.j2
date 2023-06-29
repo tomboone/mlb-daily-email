@@ -7,13 +7,15 @@
         .scores .boxscore .game-box-info .game-info,
         .probables table,
         .standings table,
-        .leaders table {
+        .leaders table,
+        .scores .linescore table {
             font-size: 12px;
         }
         .scores .scoretable .record {
             width: 99%;
         }
-        .scores .scoretable .fw-bold {
+        .scores .scoretable .fw-bold,
+        table td {
             white-space: nowrap;
         }
         .scores .scoretable {
@@ -68,7 +70,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    <details class="p-1">
+                    <details class="p-1 linescore">
                         <summary>Linescore</summary>
                         <table class="table table-bordered text-center">
                             <caption class="border border-top-0 px-2 py-1">

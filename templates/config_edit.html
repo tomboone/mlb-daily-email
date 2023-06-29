@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>
+        {% block page_title %}
+            Edit Site Config
+        {% endblock %}
+    </h2>
+    <form method="post">
+        {{ form.csrf_token }}
+        <div class="mb-3">
+            {{ form.smtp.label(class="form-label") }}
+            {{ form.smtp(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.port.label(class="form-label") }}
+            {{ form.port(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.ssl.label(class="form-label") }}
+            {{ form.ssl() }}
+        </div>
+        <div class="actions">
+            <input type="submit" value="Submit"  class="btn btn-primary" />
+        </div>
+    </form>
+
+{% endblock %}

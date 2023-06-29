@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Site Config</h1>
+        <table class="table table-striped table-sm">
+            <tbody>
+                <tr>
+                    <th>SMTP Server</th>
+                    <td>{{ config.smtp }}</td>
+                </tr>
+                <tr>
+                    <th>SMTP Port</th>
+                    <td>{{ config.port }}</td>
+                </tr>
+                <tr>
+                    <th>SMTP Username</th>
+                    <td>{{ config.username }}</td>
+                </tr>
+                <tr>
+                    <th>Sender Email</th>
+                    <td>{{ config.from_email }}</td>
+                </tr>
+                <tr>
+                    <th>SSL?</th>
+                    <td>
+                        {% if config.ssl == 1 %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <a href="{{ url_for('config_edit') }}" class="btn btn-primary">Edit Config</a>
+{% endblock %}

@@ -1,37 +1,44 @@
 from flask import Flask, render_template, flash, redirect, url_for
-from settings import secret_key, sqlalchemy_database_uri
-from flask_bcrypt import Bcrypt
-from models import User, db
-from forms import LoginForm
-from flask_login import LoginManager, login_required, login_user, logout_user
+from settings import secret_key, admin_email, security_password_salt, site_name
+from models import User, Role, Config
+from forms import ConfigForm
+from database import db_session, init_db
+from flask_login import login_required
+from flask_security import Security, SQLAlchemySessionUserDatastore, hash_password, current_user
+from flask_security.decorators import roles_required
 from datetime import datetime, timedelta
 from flask_apscheduler import APScheduler
-import statsapi
+from sqlalchemy import select
 import atexit
 import schedulers
 import get_stats
 
 app = Flask(__name__)
 
-# Flask-Login
-login_manager = LoginManager()
-login_manager.session_protection = "strong"
-login_manager.login_view = "login"
-login_manager.login_message_category = "info"
-
-bcrypt = Bcrypt()  # Flask-Bcrypt
-
 # App config
 app.config['SCHEDULER_API_ENABLED'] = True  # enable APScheduler
-app.secret_key = secret_key
-app.config['SQLALCHEMY_DATABASE_URI'] = sqlalchemy_database_uri
+app.config['SECRET_KEY'] = secret_key
+app.config['SECURITY_PASSWORD_SALT'] = security_password_salt
+app.config['SECURITY_CHANGEABLE'] = True
+app.config['SECURITY_SEND_PASSWORD_CHANGE_EMAIL'] = False
 
-login_manager.init_app(app)  # Flask-Login
-db.init_app(app)  # Flask-SQLAlchemy
-bcrypt.init_app(app)  # Flask-Bcrypt
+# Setup Flask-Security
+user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
+app.security = Security(app, user_datastore)
 
-with app.app_context():  # need to be in app context to create the database
-    db.create_all()  # create the database
+with app.app_context():  # need to be in app context to create the database.py
+    init_db()  # create the database.py
+    db_session.commit()
+
+    if not app.security.datastore.find_user(email=admin_email):
+        admin = app.security.datastore.find_role('admin')
+        if not app.security.datastore.find_role('admin'):  # If no admin role, create it
+            admin = app.security.datastore.create_role(id=1, name='admin',
+                                                       description='Administrator')  # create admin role
+        db_session.commit()
+        user = app.security.datastore.create_user(email=admin_email, password=hash_password("password"))
+        app.security.datastore.add_role_to_user(user, admin)
+    db_session.commit()
 
 # scheduler
 scheduler = APScheduler()  # create the scheduler
@@ -41,19 +48,10 @@ atexit.register(lambda: scheduler.shutdown())  # Shut down the scheduler when ex
 
 
 # Background task to update the reports
-@scheduler.task('cron', id='send_email', hour=6, max_instances=3)  # run at 55 minutes past the hour
+@scheduler.task('cron', id='send_email', minute=18, max_instances=3)  # run at 55 minutes past the hour
 def update_reports():
-    with scheduler.app.app_context():  # need to be in app context to access the database
+    with scheduler.app.app_context():  # need to be in app context to access the database.py
         schedulers.daily_email()  # update the reports
-
-
-# Flask-Login
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
-site_name = 'MLB@NTB'  # site name
 
 
 # Home route
@@ -62,39 +60,71 @@ def index():
     return render_template('index.html', title=site_name)
 
 
-# Login route
-@app.route('/login/', methods=('GET', 'POST'), strict_slashes=False)
-def login():
-    form = LoginForm()  # LoginForm from forms.py
-
-    if form.validate_on_submit():  # if form is submitted
-        try:
-            # check if user exists
-            user = User.query.filter_by(email=form.email.data).first()
-            # check if password is correct
-            if bcrypt.check_password_hash(user.pwd, form.pwd.data):
-                login_user(user)  # login user
-                return redirect(url_for('index'))  # redirect to home page
-            else:  # if login is incorrect
-                flash('Invalid email or password!', 'danger')  # flash error
-        except Exception as e:  # Catch any errors
-            flash('{}'.format(e), 'danger')  # Flash the error
-
-    # Render the login page
-    return render_template('auth.html', form=form, title='Login | {}'.format(site_name))
-
-
-# Logout route
-@app.route('/logout')
+# Config route
+@app.route('/config')
 @login_required
-def logout():
-    logout_user()  # logout user
-    return redirect(url_for('login'))  # redirect to login page
+@roles_required('admin')
+def config():
+    try:
+        siteconfig = db_session.execute(Config.query).mappings().all()[0]
+    except IndexError:
+        siteconfig = None
+
+    if siteconfig is None:
+        flash('Site config not found.', 'danger')
+        return redirect(url_for('config_add'))
+    return render_template('config.html', config=siteconfig, title='Site Config | {}'.format(site_name))
+
+
+@app.route('/config/add', methods=['GET', 'POST'])
+@login_required
+@roles_required('admin')
+def config_add():
+    try:
+        siteconfig = db_session.execute(Config.query).mappings().all()[0]
+    except IndexError:
+        siteconfig = None
+
+    if siteconfig is not None:
+        flash('Site config already exists.', 'danger')
+        return redirect(url_for('config'))
+
+    form = ConfigForm()
+    if form.validate_on_submit():
+        siteconfig = Config()
+        form.populate_obj(siteconfig)
+        db_session.add(siteconfig)
+        db_session.commit()
+        flash('Site config added successfully.', 'success')
+        return redirect(url_for('config'))
+
+    return render_template('config_add.html', form=form, title='Site Config | {}'.format(site_name))
+
+
+# Config form route
+@app.route('/config/edit', methods=['GET', 'POST'])
+@login_required
+@roles_required('admin')
+def config_edit():
+    configs = db_session.execute(select(Config).order_by(Config.id)).all()
+    siteconfig = configs[0]
+    if siteconfig is None:
+        flash('Site config not found.', 'danger')
+        return redirect(url_for('config_add'))
+    form = ConfigForm(obj=siteconfig)
+
+    if form.validate_on_submit():
+        form.populate_obj(siteconfig)
+        db_session.commit()
+        flash('Site config updated successfully.', 'success')
+        return render_template('config.html', config=siteconfig, title='Site Config | {}'.format(site_name))
+
+    return render_template('config_edit.html', form=form, title='Site Config | {}'.format(site_name))
 
 
 # Today's games route
 @app.route('/today')
-# @login_required
+@login_required
 def report():
     today = datetime.now().strftime('%Y-%m-%d')
     yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
