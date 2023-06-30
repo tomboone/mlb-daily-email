@@ -13,7 +13,6 @@ from flask_wtf.csrf import CSRFProtect
 import atexit
 import schedulers
 import get_stats
-from logger import log
 
 app = Flask(__name__)
 
@@ -138,10 +137,11 @@ def config_edit():
             Config.port,
             Config.ssl
         ).order_by(Config.id)).mappings().first()
+
     if siteconfig is None:
         flash('Site config not found.', 'danger')
         return redirect(url_for('config_add'))
-    log.info(siteconfig)
+
     form = ConfigForm(obj=siteconfig)
 
     if form.validate_on_submit():
