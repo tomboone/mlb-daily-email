@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve mlb-daily-email
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/mlb-daily-email
+Environment="PATH=/var/www/mlb-daily-email/venv/bin"
+ExecStart=/var/www/mlb-daily-email/mlb-daily-email/bin/gunicorn --workers 3 --bind unix:mlbdailyemail.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
