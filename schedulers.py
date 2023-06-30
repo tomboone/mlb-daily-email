@@ -28,7 +28,11 @@ def daily_email():
     if len(to_list) == 0:  # if there are no users, don't send an email
         return
 
-    sender = db_session.execute(select(Config.from_email).filter_by(active=1)).first()[0]  # get the sender email
+    sender = db_session.execute(
+        select(
+            Config.from_email
+        )
+    ).first()[0]  # get the sender email
 
     if sender is None:
         return  # if there is no sender, don't send an email

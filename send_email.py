@@ -20,7 +20,15 @@ def render_template(template, **kwargs):
 
 # send an email
 def send_email(to, sender, subject, body):
-    mailer = db_session.execute(select(Config).filter_by(active=1)).first()[0]  # get mailer config
+    mailer = db_session.execute(
+        select(
+            Config.smtp,
+            Config.port,
+            Config.username,
+            Config.password,
+            Config.ssl
+        )
+    ).mappings().first()  # get mailer config
 
     if mailer is None:  # if there is no mailer config, don't send an email
         log.error('No mailer config found')

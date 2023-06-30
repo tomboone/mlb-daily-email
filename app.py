@@ -9,9 +9,11 @@ from flask_security.decorators import roles_required
 from datetime import datetime, timedelta
 from flask_apscheduler import APScheduler
 from sqlalchemy import select
+from flask_wtf.csrf import CSRFProtect
 import atexit
 import schedulers
 import get_stats
+from logger import log
 
 app = Flask(__name__)
 
@@ -21,6 +23,9 @@ app.config['SECRET_KEY'] = secret_key
 app.config['SECURITY_PASSWORD_SALT'] = security_password_salt
 app.config['SECURITY_CHANGEABLE'] = True
 app.config['SECURITY_SEND_PASSWORD_CHANGE_EMAIL'] = False
+app.secret_key = app.config['SECRET_KEY']
+
+csrf = CSRFProtect(app)
 
 # Setup Flask-Security
 user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
@@ -48,7 +53,7 @@ atexit.register(lambda: scheduler.shutdown())  # Shut down the scheduler when ex
 
 
 # Background task to update the reports
-@scheduler.task('cron', id='send_email', minute=18, max_instances=3)  # run at 55 minutes past the hour
+@scheduler.task('cron', id='send_email', hour=6, max_instances=3)  # run at 6am
 def update_reports():
     with scheduler.app.app_context():  # need to be in app context to access the database.py
         schedulers.daily_email()  # update the reports
@@ -66,13 +71,25 @@ def index():
 @roles_required('admin')
 def config():
     try:
-        siteconfig = db_session.execute(Config.query).mappings().all()[0]
+        siteconfig = db_session.execute(
+            select(
+                Config.username,
+                Config.password,
+                Config.from_email,
+                Config.smtp,
+                Config.port,
+                Config.ssl
+            ).order_by(
+                Config.id
+            )
+        ).mappings().first()
     except IndexError:
         siteconfig = None
 
     if siteconfig is None:
         flash('Site config not found.', 'danger')
         return redirect(url_for('config_add'))
+
     return render_template('config.html', config=siteconfig, title='Site Config | {}'.format(site_name))
 
 
@@ -80,6 +97,21 @@ def config():
 @login_required
 @roles_required('admin')
 def config_add():
+    form = ConfigForm()
+    if form.validate_on_submit():
+        siteconfig = Config(
+            username=form.username.data,
+            password=form.password.data,
+            from_email=form.from_email.data,
+            smtp=form.smtp.data,
+            port=form.port.data,
+            ssl=form.ssl.data
+        )
+        db_session.add(siteconfig)
+        db_session.commit()
+        flash('Site config added successfully.', 'success')
+        return redirect(url_for('config'))
+
     try:
         siteconfig = db_session.execute(Config.query).mappings().all()[0]
     except IndexError:
@@ -87,15 +119,6 @@ def config_add():
 
     if siteconfig is not None:
         flash('Site config already exists.', 'danger')
-        return redirect(url_for('config'))
-
-    form = ConfigForm()
-    if form.validate_on_submit():
-        siteconfig = Config()
-        form.populate_obj(siteconfig)
-        db_session.add(siteconfig)
-        db_session.commit()
-        flash('Site config added successfully.', 'success')
         return redirect(url_for('config'))
 
     return render_template('config_add.html', form=form, title='Site Config | {}'.format(site_name))
@@ -106,11 +129,19 @@ def config_add():
 @login_required
 @roles_required('admin')
 def config_edit():
-    configs = db_session.execute(select(Config).order_by(Config.id)).all()
-    siteconfig = configs[0]
+    siteconfig = db_session.execute(
+        select(
+            Config.username,
+            Config.password,
+            Config.from_email,
+            Config.smtp,
+            Config.port,
+            Config.ssl
+        ).order_by(Config.id)).mappings().first()
     if siteconfig is None:
         flash('Site config not found.', 'danger')
         return redirect(url_for('config_add'))
+    log.info(siteconfig)
     form = ConfigForm(obj=siteconfig)
 
     if form.validate_on_submit():

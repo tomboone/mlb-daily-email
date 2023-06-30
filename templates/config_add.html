@@ -7,7 +7,10 @@
         {% endblock %}
     </h2>
     <form method="post">
-        {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.from_email.label(class="form-label") }}
+            {{ form.from_email(class="form-control") }}
         <div class="mb-3">
             {{ form.smtp.label(class="form-label") }}
             {{ form.smtp(class="form-control") }}
@@ -29,7 +32,7 @@
             {{ form.ssl() }}
         </div>
         <div class="actions">
-            <input type="submit" value="Add Config"  class="btn btn-primary" />
+            <input type="submit" value="Submit" class="btn btn-primary">
         </div>
     </form>
 
