@@ -5,7 +5,6 @@
         .scores .boxscore,
         .scores .boxscore table,
         .scores .boxscore .game-box-info .game-info,
-        .probables table,
         .standings table,
         .leaders table,
         .scores .linescore table {
@@ -261,36 +260,29 @@
         <!-- Probables -->
         <div class="probables border-top py-3">
             <h2>Today's Games</h2>
-            <table class="table table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th colspan="2">Team</th>
-                        <th> Starting Pitcher</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <table class="table">
+                <tbody style="border-top-width: 1px">
                     {% for game in probables %}
-                        <tr>
-                            <td>{{ game.teams.away.name }}</td>
-                            <td>
+                        <tr style="border-bottom: none">
+                            <th style="white-space: nowrap; border: none; padding-bottom: 0; width: 99%; padding-top: 15px">
+                                {{ game.teams.away.name }}
                                 {% if game.teams.away.pitcher != '' %}
-                                    {{ game.teams.away.pitcher }}
+                                    <span style="font-weight: normal">({{ game.teams.away.pitcher }})</span>
                                 {% else %}
-                                    TBD
+                                    <span style="font-weight: normal">(TBD)</span>
                                 {% endif %}
-                            </td>
-                            <td rowspan="2">{{ game.time }}</td>
+                            </th>
+                            <td rowspan="2" style="white-space: nowrap; border: none; vertical-align: middle; padding-top: 15px; padding-bottom: 15px">{{ game.time }}</td>
                         </tr>
-                        <tr>
-                            <td>{{ game.teams.home.name }}</td>
-                            <td>
+                        <tr style="border-bottom-width: 1px">
+                            <th style="white-space: nowrap; border: none; width: 99%; padding-bottom: 15px">
+                                {{ game.teams.home.name }}
                                 {% if game.teams.home.pitcher != '' %}
-                                    {{ game.teams.home.pitcher }}
+                                    <span style="font-weight: normal">({{ game.teams.home.pitcher }})</span>
                                 {% else %}
-                                    TBD
+                                    <span style="font-weight: normal">(TBD)</span>
                                 {% endif %}
-                            </td>
+                            </th>
                         </tr>
                     {% endfor %}
                 </tbody>
