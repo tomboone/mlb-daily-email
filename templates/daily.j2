@@ -59,7 +59,7 @@
                             {% for team in teams %}
                                 <tr>
                                     <td class="fw-bold">
-                                        {{ boxscore.teams[team].name.shortName }} {{ boxscore.teams[team].name.teamName }}
+                                        {{ boxscore.teams[team].name.shortName }}
                                     <td class="fw-light record">
                                         ({{ boxscore.teams[team].record }})
                                     </td>
@@ -264,26 +264,33 @@
             <table class="table table-sm table-striped">
                 <thead>
                     <tr>
-                        <th colspan="2">Matchup</th>
+                        <th colspan="2">Team</th>
+                        <th> Starting Pitcher</th>
                         <th>Time</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for game in probables %}
                         <tr>
-                            {% for team in teams %}
-                                <td>
-                                    <div class="fw-bold">{{ game.teams[team].name }}</div>
-                                    <div class="fw-light">SP:&nbsp;
-                                        {% if game.teams[team].pitcher != '' %}
-                                            {{ game.teams[team].pitcher }}
-                                        {% else %}
-                                            TBD
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            {% endfor %}
-                            <td>{{ game.time }}</td>
+                            <td>{{ game.teams.away.name }}</td>
+                            <td>
+                                {% if game.teams.away.pitcher != '' %}
+                                    {{ game.teams.away.pitcher }}
+                                {% else %}
+                                    TBD
+                                {% endif %}
+                            </td>
+                            <td rowspan="2">{{ game.time }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ game.teams.home.name }}</td>
+                            <td>
+                                {% if game.teams.home.pitcher != '' %}
+                                    {{ game.teams.home.pitcher }}
+                                {% else %}
+                                    TBD
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
