@@ -1,45 +1,13 @@
-{% extends "bootstrap.j2" %}
-
 {% block content %}
-    <style>
-        .scores .boxscore,
-        .scores .boxscore table,
-        .scores .boxscore .game-box-info .game-info,
-        .standings table,
-        .leaders table,
-        .scores .linescore table {
-            font-size: 12px;
-        }
-        .scores .scoretable .record {
-            width: 99%;
-        }
-        .scores .scoretable .fw-bold,
-        table td {
-            white-space: nowrap;
-        }
-        .scores .scoretable {
-            margin-bottom: 0;
-        }
-        .scores .scoretable .text-center {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-        .scores .border {
-            border: 1px solid #dee2e6 !important;
-        }
-        .scores .rounded {
-            border-radius: 0.25rem !important;
-        }
-    </style>
-    <div class="container">
+    <div style="font-size: 14px">
         {% set teams = ['away', 'home'] %}
-        <div class="scores border-top py-3">
+        <div class="scores" style="border-top-width: 1px; padding-top: 3px; padding-bottom: 3px">
             <h2>Yesterday's Scores</h2>
             {% for boxscore in boxscores %}
-                <div class="mb-3 px-3 py-1 border rounded">
-                    <table class="table scoretable table-sm table-striped">
-                        <caption>
-                            {% if boxscore.linescore.currentInning != '' %}
+                <div class="score" style="padding-bottom: 10px; border-top-style: solid; padding-top: 10px">
+                    <table style="margin: 0; caption-side: bottom">
+                        <caption style="font-size: 12px; margin-bottom: 10px">
+                            {% if (boxscore.linescore.currentInning != '') %}
                                 {{ boxscore.status }}/{{ boxscore.linescore.currentInning }}
                             {% else %}
                                 {{ boxscore.status }}
@@ -49,41 +17,34 @@
                             <tr>
                                 <th></th>
                                 <th></th>
-                                <th class="text-center">R</th>
-                                <th class="text-center">H</th>
-                                <th class="text-center">E</th>
+                                <th style="text-align: center; padding-right: 10px; padding-left: 10px">R</th>
+                                <th style="text-align: center; padding-right: 10px; padding-left: 10px">H</th>
+                                <th style="text-align: center; padding-right: 10px; padding-left: 10px">E</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for team in teams %}
                                 <tr>
-                                    <td class="fw-bold">
+                                    <td style="font-weight: bold; white-space: nowrap">
                                         {{ boxscore.teams[team].name.shortName }}
-                                    <td class="fw-light record">
+                                    <td style="width: 99%; white-space: nowrap">
                                         ({{ boxscore.teams[team].record }})
                                     </td>
-                                    <td class="text-center fw-bold">{{ boxscore.linescore.teams[team].runs }}</td>
-                                    <td class="text-center fw-bold">{{ boxscore.linescore.teams[team].hits }}</td>
-                                    <td class="text-center fw-bold">{{ boxscore.linescore.teams[team].errors }}</td>
+                                    <td style="text-align: center; font-weight: bold">{{ boxscore.linescore.teams[team].runs }}</td>
+                                    <td style="text-align: center; font-weight: bold">{{ boxscore.linescore.teams[team].hits }}</td>
+                                    <td style="text-align: center; font-weight: bold">{{ boxscore.linescore.teams[team].errors }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
-                    <details class="p-1 linescore">
+                    <details class="linescore">
                         <summary>Linescore</summary>
-                        <table class="table table-bordered text-center">
-                            <caption class="border border-top-0 px-2 py-1">
-                                {% if boxscore.linescore.currentInning != '' %}
-                                    {{ boxscore.status }} - {{ boxscore.linescore.currentInning }}
-                                {% else %}
-                                    {{ boxscore.status }}
-                                {% endif %}
-                            </caption>
+                        <table style="text-align: center; width: 100%">
                             <thead>
                                 <tr>
-                                    <th class="border-0"></th>
+                                    <th style="width: 25%"></th>
                                     {% for inning in boxscore.linescore.innings %}
-                                        <th class="fw-normal">{{ inning.num }}</th>
+                                        <th style="font-weight: normal">{{ inning.num }}</th>
                                     {% endfor %}
                                     <th>R</th>
                                     <th>H</th>
@@ -93,9 +54,13 @@
                             <tbody>
                                 {% for team in teams %}
                                     <tr>
-                                        <th class="text-start">{{ boxscore.teams[team].name.abbreviation }}</th>
+                                        <th style="text-align: left">{{ boxscore.teams[team].name.abbreviation }}</th>
                                         {% for inning in boxscore.linescore.innings %}
-                                            <td>{{ inning[team].runs }}</td>
+                                            {% if inning[team].runs != '' %}
+                                                <td>{{ inning[team].runs }}</td>
+                                            {% else %}
+                                                <td>x</td>
+                                            {% endif %}
                                         {% endfor %}
                                         <th>{{ boxscore.linescore.teams[team].runs }}</th>
                                         <th>{{ boxscore.linescore.teams[team].hits }}</th>
@@ -106,151 +71,134 @@
                         </table>
                         <details>
                             <summary>Box Score</summary>
-                            <div class="boxscore border-top">
-                                <section>
-                                    <div class="boxscore_category d-flex flex-wrap">
-                                        {% for team in teams %}
-                                            <div class="boxscore_team p-2 flex-fill">
-                                                <div class="team_title">
-                                                    {{ boxscore.teams[team].name.shortName }} {{ boxscore.teams[team].name.teamName }} Hitting
+                            <div style="border-top-width: 1px; font-size: 12px">
+                                {% for team in teams %}
+                                    <div style="margin: 10px 0">
+                                        <table style="width: 100%; text-align: center; font-size: 12px; margin-bottom: 10px">
+                                            <thead>
+                                                <tr style="border-top-style: solid; border-bottom-style: solid">
+                                                    <th style="text-align: left; width: 25%">Batters - {{ boxscore.teams[team].name.teamName }}</th>
+                                                    <th>AB</th>
+                                                    <th>R</th>
+                                                    <th>H</th>
+                                                    <th>RBI</th>
+                                                    <th>HR</th>
+                                                    <th>BB</th>
+                                                    <th>K</th>
+                                                    <th>AVG</th>
+                                                    <th>OBP</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for batter in boxscore.teams[team].batters[1:] %}
+                                                <tr>
+                                                    <th style="text-align: left">{{ batter.namefield }}</th>
+                                                    <td>{{ batter.ab }}</td>
+                                                    <td>{{ batter.r }}</td>
+                                                    <td>{{ batter.h }}</td>
+                                                    <td>{{ batter.rbi }}</td>
+                                                    <td>{{ batter.hr }}</td>
+                                                    <td>{{ batter.bb }}</td>
+                                                    <td>{{ batter.k }}</td>
+                                                    <td>{{ batter.avg }}</td>
+                                                    <td>{{ batter.obp }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <th style="text-align: left">Totals</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.ab }}</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.r }}</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.h }}</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.rbi }}</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.hr }}</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.bb }}</th>
+                                                <th>{{ boxscore.teams[team].battingTotals.k }}</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="padding-bottom: 10px">
+                                        {% if boxscore.teams[team].battingNotes|length > 0 %}
+                                            {% for x in range(boxscore.teams[team].battingNotes|length + 1) %}
+                                                <div class="team-note">
+                                                    {{ boxscore.teams[team].battingNotes[x] }}
                                                 </div>
-                                                <div class="team_table">
-                                                    <table class="table table-sm table-striped text-center border-end">
-                                                        <thead>
-                                                            <tr class="border-top">
-                                                                <th class="text-start border-end">HITTERS</th>
-                                                                <th>AB</th>
-                                                                <th>R</th>
-                                                                <th>H</th>
-                                                                <th>RBI</th>
-                                                                <th>HR</th>
-                                                                <th>BB</th>
-                                                                <th>K</th>
-                                                                <th>AVG</th>
-                                                                <th>OBP</th>
-                                                                <th>SLG</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {% for batter in boxscore.teams[team].batters[1:] %}
-                                                                <tr>
-                                                                    <td class="text-start border-end">{{ batter.namefield }}</td>
-                                                                    <td>{{ batter.ab }}</td>
-                                                                    <td>{{ batter.r }}</td>
-                                                                    <td>{{ batter.h }}</td>
-                                                                    <td>{{ batter.rbi }}</td>
-                                                                    <td>{{ batter.hr }}</td>
-                                                                    <td>{{ batter.bb }}</td>
-                                                                    <td>{{ batter.k }}</td>
-                                                                    <td>{{ batter.avg }}</td>
-                                                                    <td>{{ batter.obp }}</td>
-                                                                    <td>{{ batter.slg }}</td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            <tr>
-                                                                <th class="text-start border-end">TEAM</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.ab }}</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.r }}</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.h }}</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.rbi }}</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.hr }}</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.bb }}</th>
-                                                                <th>{{ boxscore.teams[team].battingTotals.k }}</th>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="team_notes pb-2">
-                                                    {% if boxscore.teams[team].battingNotes|length > 0 %}
-                                                        {% for x in range(boxscore.teams[team].battingNotes|length + 1) %}
-                                                        <div class="team-note">
-                                                            {{ boxscore.teams[team].battingNotes[x] }}
-                                                        </div>
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                </div>
-                                                <div class="team-info pb-2">
-                                                    {% for category in boxscore.teams[team].info %}
-                                                        <div class="category pb-2">
-                                                            <div class="fw-bold">{{ category.title }}</div>
-                                                            {% for item in category.fieldList %}
-                                                                <div class="stat">
-                                                                    <span class="fw-bold">{{ item.label }}:</span> {{ item.value }}
-                                                                </div>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <div style="padding-bottom: 10px">
+                                        {% for category in boxscore.teams[team].info %}
+                                            <div style="padding-bottom: 10px">
+                                                <div style="font-weight: bold">{{ category.title }}</div>
+                                                {% for item in category.fieldList %}
+                                                    <div class="stat">
+                                                        <span style="font-weight: bold">{{ item.label }}:</span> {{ item.value }}
+                                                    </div>
+                                                {% endfor %}
                                             </div>
                                         {% endfor %}
                                     </div>
-                                    <div class="boxscore_category d-flex flex-wrap">
-                                        {% for team in teams %}
-                                            <div class="boxscore_team p-2 flex-fill">
-                                                <div class="team_title">
-                                                    {{ boxscore.teams[team].name.shortName }} {{ boxscore.teams[team].name.teamName }} Pitching
-                                                </div>
-                                                <div class="team_table">
-                                                    <table class="table table-sm table-striped text-center border-end">
-                                                        <thead>
-                                                            <tr class="border-top">
-                                                                <th class="text-start border-end">PITCHERS</th>
-                                                                <th>IP</th>
-                                                                <th>H</th>
-                                                                <th>R</th>
-                                                                <th>ER</th>
-                                                                <th>BB</th>
-                                                                <th>K</th>
-                                                                <th>HR</th>
-                                                                <th>ERA</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {% for pitcher in boxscore.teams[team].pitchers[1:] %}
-                                                                <tr>
-                                                                    <td class="text-start border-end">{{ pitcher.namefield }}</td>
-                                                                    <td>{{ pitcher.ip }}</td>
-                                                                    <td>{{ pitcher.h }}</td>
-                                                                    <td>{{ pitcher.r }}</td>
-                                                                    <td>{{ pitcher.er }}</td>
-                                                                    <td>{{ pitcher.bb }}</td>
-                                                                    <td>{{ pitcher.k }}</td>
-                                                                    <td>{{ pitcher.hr }}</td>
-                                                                    <td>{{ pitcher.era }}</td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            <tr>
-                                                                <th class="text-start border-end">TEAM</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.ip }}</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.h }}</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.r }}</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.er }}</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.bb }}</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.k }}</th>
-                                                                <th>{{ boxscore.teams[team].pitchingTotals.hr }}</th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
+                                {% endfor %}
+                            </div>
+                            <div style="font-size: 12px">
+                                {% for team in teams %}
+                                    <div class="team_table">
+                                        <table style="text-align: center;font-size: 12px; width: 100%; margin-bottom: 10px">
+                                            <thead>
+                                                <tr style="border-top-style: solid; border-bottom-style: solid">
+                                                    <th style="text-align: left; width: 35%">Pitchers - {{ boxscore.teams[team].name.teamName }}</th>
+                                                    <th>IP</th>
+                                                    <th>H</th>
+                                                    <th>R</th>
+                                                    <th>ER</th>
+                                                    <th>BB</th>
+                                                    <th>K</th>
+                                                    <th>HR</th>
+                                                    <th>ERA</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for pitcher in boxscore.teams[team].pitchers[1:] %}
+                                                    <tr>
+                                                        <th style="text-align: left">{{ pitcher.namefield }}</th>
+                                                        <td>{{ pitcher.ip }}</td>
+                                                        <td>{{ pitcher.h }}</td>
+                                                        <td>{{ pitcher.r }}</td>
+                                                        <td>{{ pitcher.er }}</td>
+                                                        <td>{{ pitcher.bb }}</td>
+                                                        <td>{{ pitcher.k }}</td>
+                                                        <td>{{ pitcher.hr }}</td>
+                                                        <td>{{ pitcher.era }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                <tr>
+                                                    <th style="text-align: left">Totals</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.ip }}</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.h }}</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.r }}</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.er }}</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.bb }}</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.k }}</th>
+                                                    <th>{{ boxscore.teams[team].pitchingTotals.hr }}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="game-box-info">
-                                        {% for note in boxscore.info %}
-                                            <div class="game-info">
-                                                {% if note.value %}
-                                                    <span class="fw-bold">{{ note.label }}: </span>{{ note.value }}
-                                                {% else %}
-                                                    {{ note.label }}
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
+                                {% endfor %}
+                            </div>
+                            <div style="font-size: 12px">
+                                {% for note in boxscore.info %}
+                                    <div style="margin-bottom: 10px">
+                                        {% if note.value %}
+                                            <span style="font-weight: bold">{{ note.label }}: </span>{{ note.value }}
+                                        {% else %}
+                                            <span style="font-weight: bold">{{ note.label }}</span>
+                                        {% endif %}
                                     </div>
-                                </section>
+                                {% endfor %}
                             </div>
                         </details>
                     </details>
@@ -258,13 +206,13 @@
             {% endfor %}
         </div>
         <!-- Probables -->
-        <div class="probables border-top py-3">
+        <div class="probables">
             <h2>Today's Games</h2>
-            <table class="table">
-                <tbody style="border-top-width: 1px">
+            <table style="width: 100%">
+                <tbody style="border-top-style: solid">
                     {% for game in probables %}
                         <tr style="border-bottom: none">
-                            <th style="white-space: nowrap; border: none; padding-bottom: 0; width: 99%; padding-top: 15px">
+                            <th style="white-space: nowrap; border: none; padding-bottom: 0; width: 99%; padding-top: 15px; text-align: left">
                                 {{ game.teams.away.name }}
                                 {% if game.teams.away.pitcher != '' %}
                                     <span style="font-weight: normal">({{ game.teams.away.pitcher }})</span>
@@ -272,10 +220,10 @@
                                     <span style="font-weight: normal">(TBD)</span>
                                 {% endif %}
                             </th>
-                            <td rowspan="2" style="white-space: nowrap; border: none; vertical-align: middle; padding-top: 15px; padding-bottom: 15px">{{ game.time }}</td>
+                            <td rowspan="2" style="white-space: nowrap; border: none; vertical-align: middle; padding-top: 15px; padding-bottom: 15px; text-align: right">{{ game.time }}</td>
                         </tr>
-                        <tr style="border-bottom-width: 1px">
-                            <th style="white-space: nowrap; border: none; width: 99%; padding-bottom: 15px">
+                        <tr style="border-bottom-style: solid">
+                            <th style="white-space: nowrap; border: none; width: 99%; padding-bottom: 15px; text-align: left">
                                 {{ game.teams.home.name }}
                                 {% if game.teams.home.pitcher != '' %}
                                     <span style="font-weight: normal">({{ game.teams.home.pitcher }})</span>
@@ -289,15 +237,15 @@
             </table>
         </div>
         <!-- Standings -->
-        <div class="standings border-top py-3">
+        <div style="padding-top: 10px; padding-bottom: 10px">
             <h2>Standings</h2>
-            <div class="d-flex flex-wrap">
+            <div>
                 {% for division in standings %}
-                    <div class="flex-fill p-2">
-                        <table class="table table-sm table-striped caption-top">
+                    <div >
+                        <table style="width: 100%; text-align: center; margin-bottom: 10px">
                             <thead>
-                                <tr>
-                                    <th>{{ division.div_name }}</th>
+                                <tr style="border-top-style: solid; border-bottom-style: solid">
+                                    <th style="text-align: left; width: 50%">{{ division.div_name }}</th>
                                     <th>W</th>
                                     <th>L</th>
                                     <th>Pct</th>
@@ -307,7 +255,7 @@
                             <tbody>
                                 {% for team in division.teams %}
                                     <tr>
-                                        <th>{{ team.name }}</th>
+                                        <th style="text-align: left">{{ team.name }}</th>
                                         <td>{{ team.w }}</td>
                                         <td>{{ team.l }}</td>
                                         <td>{{ (team.w/(team.w + team.l))|round(3) }}</td>
@@ -352,14 +300,18 @@
                                     <div class="col league p-2">
                                         {% for item in leaders[group].league[league] %}
                                             {% if item.category == bbcategory %}
-                                                <h5>{{ league }}</h5>
-                                                <table class="table table-sm table-striped">
+                                                <table style="width: 100%; margin-bottom: 10px">
+                                                    <thead>
+                                                        <tr style="border-bottom-style: solid; border-top-style: solid">
+                                                            <th colspan="3" style="text-align: left">{{ bbcategory }} - {{ league }}</th>
+                                                        </tr>
+                                                    </thead>
                                                     <tbody>
                                                         {% for leader in item.leaders %}
                                                             <tr>
-                                                                <th>{{ leader.1 }}</th>
-                                                                <td>{{ leader.2 }}</td>
-                                                                <th>{{ leader.3 }}</th>
+                                                                <th style="text-align: left; white-space: nowrap">{{ leader.1 }}</th>
+                                                                <td style="text-align: left; width: 99%">{{ leader.2 }}</td>
+                                                                <th style="text-align: right; white-space: nowrap">{{ leader.3 }}</th>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>
