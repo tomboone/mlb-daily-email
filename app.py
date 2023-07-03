@@ -153,20 +153,5 @@ def config_edit():
     return render_template('config_edit.html', form=form, title='Site Config | {}'.format(site_name))
 
 
-# Today's games route
-@app.route('/today')
-@login_required
-def report():
-    today = datetime.now().strftime('%Y-%m-%d')
-    yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
-    boxscores = get_stats.get_boxscores(yesterday)  # get yesterday's boxscores
-    probables = get_stats.get_probables(today)  # get today's probables
-    standings = get_stats.get_standings()  # get standings
-    leaders = get_stats.get_league_leaders()  # get league leaders
-
-    return render_template('today.html', boxscores=boxscores, probables=probables, standings=standings,
-                           leaders=leaders, title='Today\'s Email | {}'.format(site_name))
-
-
 if __name__ == '__main__':
     app.run()
