@@ -14,6 +14,7 @@ def daily_email():
     boxscores = get_stats.get_boxscores(yesterday)  # get yesterday's boxscores
     probables = get_stats.get_probables(today)  # get today's probables
     standings = get_stats.get_standings()  # get standings
+    transactions = get_stats.get_transactions(yesterday)  # get transactions
     leaders = get_stats.get_league_leaders()  # get league leaders
 
     if len(boxscores) == 0 & len(probables) == 0:  # if there are no games today or yesterday, don't send an email

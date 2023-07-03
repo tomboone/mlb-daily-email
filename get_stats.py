@@ -1,6 +1,8 @@
 from datetime import datetime
 import statsapi
 from dateutil import tz
+import requests
+from logger import log
 
 
 # Get all the boxscores for a date
@@ -132,3 +134,70 @@ def get_leaders(group, categories, league):
             'leaders': league_leaders
         })
     return leaders
+
+
+def get_transactions(date):
+    endpoint = 'https://statsapi.mlb.com/api/v1/transactions'  # MLB API endpoint
+    payload = {'date': date, 'sportId': 1}  # payload for API request
+
+    try:  # try to get transactions
+        response = requests.get(endpoint, params=payload)  # get transactions
+        response.raise_for_status()  # raise exception if status code is not 200
+    except requests.exceptions.HTTPError as err:  # catch exception
+        log.error(err)  # log error
+        return None  # return None
+    else:  # if no exception
+        transactions_data = response.json()['transactions']  # get transactions data
+
+        transactions_list = []  # empty list for transactions
+        for transaction in transactions_data:  # loop through transactions
+            transaction_dict = {  # create dictionary for transaction
+                'team': parse_txn_for_team(transaction),  # team involved in transaction
+                'description': parse_txn_for_description(transaction)  # transaction description
+            }
+            if transaction_dict['team']['name'] is not None:  # if team is not empty
+                transactions_list.append(transaction_dict)  # add transaction to list
+
+    txns = sorted(transactions_list, key=lambda k: k['team']['name'])  # sort list of txns by team name
+    for txn in txns:
+        txn['description'] = txn['description'].replace(txn['team']['name'] + ' ', '')  # remove team from description
+        txn['description'] = txn['description'][0].upper() + txn['description'][1:]  # capitalize description
+
+    teams = []  # empty list for teams
+    for txn in txns:  # loop through transactions
+        if txn['team']['name'] not in teams:  # if team is not in list
+            teams.append(txn['team']['name'])  # add team to list
+    transactions = {
+        'teams': teams,
+        'txns': txns
+    }
+    return transactions
+
+
+def parse_txn_for_description(transaction):
+    if 'description' in transaction:
+        description = transaction['description']
+    else:
+        description = None
+    return description
+
+
+def parse_txn_for_team(transaction):
+    team = None
+    if 'toTeam' in transaction:
+        team = parse_team(transaction['toTeam']['id'], transaction['toTeam']['name'])
+    if 'fromTeam' in transaction and team is not None:
+        team = parse_team(transaction['fromTeam']['id'], transaction['fromTeam']['name'])
+    return team
+
+
+def parse_team(team_id, team_name):
+    txn_team = {'name': None, 'id': None}  # empty dictionary for team
+
+    if 108 <= team_id <= 121 or \
+            133 <= team_id <= 147 or \
+            team_id == 158:  # if team is an MLB team
+        txn_team['id'] = team_id  # add team ID to dictionary
+        txn_team['name'] = team_name  # add team name to dictionary
+
+    return txn_team

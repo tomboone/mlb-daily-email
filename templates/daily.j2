@@ -245,21 +245,21 @@
                         <table style="width: 100%; text-align: center; margin-bottom: 10px">
                             <thead>
                                 <tr style="border-top-style: solid; border-bottom-style: solid">
-                                    <th style="text-align: left; width: 50%">{{ division.div_name }}</th>
-                                    <th>W</th>
-                                    <th>L</th>
-                                    <th>Pct</th>
-                                    <th>GB</th>
+                                    <th style="text-align: left; width: 50%; padding: 5px">{{ division.div_name }}</th>
+                                    <th style="padding: 5px">W</th>
+                                    <th style="padding: 5px">L</th>
+                                    <th style="padding: 5px">Pct</th>
+                                    <th style="padding: 5px">GB</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for team in division.teams %}
                                     <tr>
-                                        <th style="text-align: left">{{ team.name }}</th>
-                                        <td>{{ team.w }}</td>
-                                        <td>{{ team.l }}</td>
-                                        <td>{{ (team.w/(team.w + team.l))|round(3) }}</td>
-                                        <td>{{ team.gb }}</td>
+                                        <th style="text-align: left; padding: 5px">{{ team.name }}</th>
+                                        <td style="padding: 5px">{{ team.w }}</td>
+                                        <td style="padding: 5px">{{ team.l }}</td>
+                                        <td style="padding: 5px">{{ (team.w/(team.w + team.l))|round(3) }}</td>
+                                        <td style="padding: 5px">{{ team.gb }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -268,8 +268,24 @@
                 {% endfor %}
             </div>
         </div>
+        <!-- Transactions -->
+        <div class="transactions">
+            <h2 style="border-bottom-style: solid">Transactions</h2>
+            {% for team in transactions.teams %}
+                <div class="team">
+                    <h3>{{ team }}</h3>
+                    <ul class="transaction" style="border-bottom-style: solid; padding-bottom: 10px">
+                        {% for transaction in transactions.txns %}
+                            {% if transaction.team.name == team %}
+                                <li>{{ transaction.description }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
         <!-- Leaders -->
-        <div class="leaders border-top py-3">
+        <div class="leaders">
             <h2>League Leaders</h2>
             {% set groups = ['Batting', 'Pitching'] %}
             {% set categories = {
@@ -303,15 +319,15 @@
                                                 <table style="width: 100%; margin-bottom: 10px">
                                                     <thead>
                                                         <tr style="border-bottom-style: solid; border-top-style: solid">
-                                                            <th colspan="3" style="text-align: left">{{ bbcategory }} - {{ league }}</th>
+                                                            <th colspan="3" style="text-align: left; padding: 5px">{{ bbcategory }} - {{ league }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {% for leader in item.leaders %}
                                                             <tr>
-                                                                <th style="text-align: left; white-space: nowrap">{{ leader.1 }}</th>
-                                                                <td style="text-align: left; width: 99%">{{ leader.2 }}</td>
-                                                                <th style="text-align: right; white-space: nowrap">{{ leader.3 }}</th>
+                                                                <th style="text-align: left; white-space: nowrap; padding: 5px">{{ leader.1 }}</th>
+                                                                <td style="text-align: left; width: 99%; padding: 5px">{{ leader.2 }}</td>
+                                                                <th style="text-align: right; white-space: nowrap; padding: 5px">{{ leader.3 }}</th>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>
