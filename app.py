@@ -52,7 +52,7 @@ atexit.register(lambda: scheduler.shutdown())  # Shut down the scheduler when ex
 
 
 # Background task to update the reports
-@scheduler.task('cron', id='send_email', minute=43, max_instances=1)  # run at 6am
+@scheduler.task('cron', id='send_email', hour=6, max_instances=1)  # run at 6am
 def update_reports():
     with scheduler.app.app_context():  # need to be in app context to access the database.py
         schedulers.daily_email()  # update the reports
