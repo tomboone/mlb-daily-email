@@ -34,7 +34,7 @@ mkdocs-material-extensions==1.1.1
 MLB-StatsAPI==1.8.1
 packaging==24.2
 passlib==1.7.4
-pipdeptree==2.25.0
+pipdeptree==2.26.0
 python-dateutil==2.9.0.post0
 pytz==2023.3
 requests==2.32.3
