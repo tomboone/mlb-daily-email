@@ -478,13 +478,13 @@ Flask = "*"
 
 [[package]]
 name = "flask-security-too"
-version = "5.6.0"
+version = "5.6.1"
 description = "Quickly add security features to your Flask application."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "flask_security_too-5.6.0-py3-none-any.whl", hash = "sha256:dc70147bc34964f0c965b03c2762feef7bf57375d1584a0d3b9ada7c98366d22"},
-    {file = "flask_security_too-5.6.0.tar.gz", hash = "sha256:8da51fcb7393e3fe6f931af84ed4c90c7c08bbfe99a19080cb4b7343e76d80b2"},
+    {file = "flask_security_too-5.6.1-py3-none-any.whl", hash = "sha256:890a0f1c98cd825c82646aec1df21c75f717c3538a4e47c1ad6d6add94314887"},
+    {file = "flask_security_too-5.6.1.tar.gz", hash = "sha256:d2dbfc4fedce6b124a8d268d18116fdbac48d4f712afea8abe60aac3235c583a"},
 ]
 
 [package.dependencies]
@@ -502,7 +502,7 @@ wtforms = ">=3.0.0"
 babel = ["babel (>=2.12.1)", "flask_babel (>=3.1.0)"]
 common = ["argon2_cffi (>=21.3.0)", "bcrypt (>=4.0.1)", "bleach (>=6.0.0)", "flask_mailman (>=0.3.0)"]
 fsqla = ["flask_sqlalchemy (>=3.1.0)", "sqlalchemy (>=2.0.18)", "sqlalchemy-utils (>=0.41.1)"]
-low = ["Flask (==3.0.0)", "Flask-Babel (==3.1.0)", "Flask-Login (==0.6.3)", "Flask-Mailman (==0.3.0)", "Flask-SQLAlchemy (==3.1.0)", "Flask-SQLAlchemy-Lite (==0.1.0)", "Flask-WTF (==1.1.2)", "argon2_cffi (==21.3.0)", "authlib (==1.2.0)", "babel (==2.12.1)", "bcrypt (==4.0.1)", "bleach (==6.0.0)", "freezegun", "itsdangerous (==2.1.2)", "jinja2 (==3.1.2)", "markupsafe (==2.1.2)", "mongoengine (==0.27.0)", "mongomock (==4.1.2)", "peewee (==3.16.2)", "phonenumberslite (==8.13.11)", "pony (==0.7.16)", "qrcode (==7.4.2)", "requests", "setuptools", "sqlalchemy (==2.0.18)", "sqlalchemy-utils (==0.41.1)", "webauthn (==2.0.0)", "werkzeug (==3.0.1)", "zxcvbn (==4.4.28)"]
+low = ["Flask (==3.0.0)", "Flask-Babel (==4.0.0)", "Flask-Login (==0.6.3)", "Flask-Mailman (==0.3.0)", "Flask-SQLAlchemy (==3.1.0)", "Flask-SQLAlchemy-Lite (==0.1.0)", "Flask-WTF (==1.1.2)", "argon2_cffi (==21.3.0)", "authlib (==1.2.0)", "babel (==2.12.1)", "bcrypt (==4.0.1)", "bleach (==6.0.0)", "freezegun", "itsdangerous (==2.1.2)", "jinja2 (==3.1.2)", "markupsafe (==2.1.2)", "mongoengine (==0.27.0)", "mongomock (==4.1.2)", "peewee (==3.16.2)", "phonenumberslite (==8.13.11)", "pony (==0.7.16)", "qrcode (==7.4.2)", "requests", "setuptools", "sqlalchemy (==2.0.18)", "sqlalchemy-utils (==0.41.1)", "webauthn (==2.0.0)", "werkzeug (==3.0.1)", "zxcvbn (==4.4.28)"]
 mfa = ["cryptography (>=40.0.2)", "phonenumberslite (>=8.13.11)", "qrcode (>=7.4.2)", "webauthn (>=2.0.0)"]
 
 [[package]]
@@ -928,18 +928,18 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "setuptools"
-version = "75.8.2"
+version = "78.1.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "setuptools-75.8.2-py3-none-any.whl", hash = "sha256:558e47c15f1811c1fa7adbd0096669bf76c1d3f433f58324df69f3f5ecac4e8f"},
-    {file = "setuptools-75.8.2.tar.gz", hash = "sha256:4880473a969e5f23f2a2be3646b2dfd84af9028716d398e46192f84bc36900d2"},
+    {file = "setuptools-78.1.0-py3-none-any.whl", hash = "sha256:3e386e96793c8702ae83d17b853fb93d3e09ef82ec62722e61da5cd22376dcd8"},
+    {file = "setuptools-78.1.0.tar.gz", hash = "sha256:18fd474d4a82a5f83dac888df697af65afa82dec7323d09c3e37d1f14288da54"},
 ]
 
 [package.extras]
 check = ["pytest-checkdocs (>=2.4)", "pytest-ruff (>=0.2.1)", "ruff (>=0.8.0)"]
-core = ["importlib_metadata (>=6)", "jaraco.collections", "jaraco.functools (>=4)", "jaraco.text (>=3.7)", "more_itertools", "more_itertools (>=8.8)", "packaging", "packaging (>=24.2)", "platformdirs (>=4.2.2)", "tomli (>=2.0.1)", "wheel (>=0.43.0)"]
+core = ["importlib_metadata (>=6)", "jaraco.functools (>=4)", "jaraco.text (>=3.7)", "more_itertools", "more_itertools (>=8.8)", "packaging (>=24.2)", "platformdirs (>=4.2.2)", "tomli (>=2.0.1)", "wheel (>=0.43.0)"]
 cover = ["pytest-cov"]
 doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "pyproject-hooks (!=1.1)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier", "towncrier (<24.7)"]
 enabler = ["pytest-enabler (>=2.2)"]
@@ -1227,4 +1227,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a81e1d46f424522e6e3c9c4a3ebdd021819f95595830563fd0ee71585af93b88"
+content-hash = "5ed20a8c087079a99cf65b9015ddd22f5cbad493bf81e19f5c33a21028708919"
